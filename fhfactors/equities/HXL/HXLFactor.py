@@ -127,20 +127,24 @@ class HXLFactors(object):
         ROE30 = securities['ROE30']
         ROE70 = securities['ROE70']
         
-        for c in securities['ROE'].columns:
-            benchmark30 = ROE30[c]
-            benchmark70 = ROE70[c]
-            for i in securities['ROE'].index:
+        for i in securities['ROE'].index:
+            indicator = np.nan
+            for c in securities['ROE'].columns:
+                
+                benchmark30 = ROE30[c]
+                benchmark70 = ROE70[c]
                 stock_ROE = securities['ROE'].loc[i, c]
                 
-                if stock_ROE == np.NaN or stock_ROE == 0:
-                    ROEcls.at[i, c] = np.NaN
+                if stock_ROE == np.nan or stock_ROE == 0:
+                    pass
                 elif stock_ROE <= benchmark30:
-                    ROEcls.at[i, c] = 'LR'
+                    indicator = 'LR'
                 elif stock_ROE <= benchmark70:
-                    ROEcls.at[i, c] = 'MR'
+                    indicator = 'MR'
                 else:
-                    ROEcls.at[i, c] = 'HR'
+                    indicator = 'HR'
+                    
+                ROEcls.at[i, c] = indicator
                     
         return ROEcls
     
@@ -166,20 +170,25 @@ class HXLFactors(object):
         ia30 = securities['IA30']
         ia70 = securities['IA70']
         
-        for c in securities['I/A'].columns:
-            benchmark30 = ia30[c]
-            benchmark70 = ia70[c]
-            for i in securities['I/A'].index:
+        for i in securities['I/A'].index:
+            indicator = np.nan            
+            for c in securities['I/A'].columns:
+                
+                benchmark30 = ia30[c]
+                benchmark70 = ia70[c]
                 stock_ia = securities['I/A'].loc[i, c]
                 
-                if stock_ia == np.NaN or stock_ia == 0:
-                    iacls.at[i, c] = np.NaN
-                elif stock_ia <= benchmark30:
-                    iacls.at[i, c] = 'LIA'
-                elif stock_ia <= benchmark70:
-                    iacls.at[i, c] = 'MIA'
-                else:
-                    iacls.at[i, c] = 'HIA'
+                if c.month == 7:
+                    if stock_ia == np.nan or stock_ia == 0:
+                        indicator = np.nan
+                    elif stock_ia <= benchmark30:
+                        indicator = 'LIA'
+                    elif stock_ia <= benchmark70:
+                        indicator = 'MIA'
+                    else:
+                        indicator = 'HIA'
+                
+                iacls.at[i, c] = indicator
                     
         return iacls
     
@@ -204,17 +213,22 @@ class HXLFactors(object):
                                columns=securities['marketcap'].columns)
         sizemedian = securities['mkmedian']
         
-        for c in sizecls.columns:
-            benchmark = sizemedian[c]
-            for i in sizecls.index:
+        for i in sizecls.index:
+            indicator = np.nan
+            for c in sizecls.columns:
+                
+                benchmark = sizemedian[c]
                 stock_size = securities['marketcap'].loc[i, c]
                 
-                if stock_size == np.NaN or stock_size == 0:
-                    sizecls.at[i, c] = np.NaN
-                elif stock_size <= benchmark:
-                    sizecls.at[i, c] = 'S'
-                else:
-                    sizecls.at[i, c] = 'B'
+                if c.month == 7:
+                    if stock_size == np.nan or stock_size == 0:
+                        indicator = np.nan
+                    elif stock_size <= benchmark:
+                        indicator = 'S'
+                    else:
+                        indicator = 'B'
+                        
+                sizecls.at[i, c] = indicator
                     
         return sizecls
         
@@ -365,8 +379,7 @@ class HXLFactors(object):
     
 """
 TO DO:
-    IA cls is rebalancing every month. Need to change it so it rebalances only at the end of June.
-    Same thing is happening to Size cls.
+    Think I finished it. Just have to debug it, and check results with Hou paper.
     
     Write the description of get_profit and get_investment functions.
     Write the description of the calculate_factors function.
