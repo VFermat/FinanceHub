@@ -446,8 +446,6 @@ class SwapCurve(object):
         holidays = AnbimaHolidays().get_holidays()
 
         maturity1_date = base_date + dt.timedelta(days=maturity1)
-        print(maturity1_date)
-        print(base_date)
         maturity2_date = base_date + dt.timedelta(days=maturity2)
 
         business_days1 = np.busday_count(np.array(base_date).astype('datetime64[D]'),
